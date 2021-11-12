@@ -3,8 +3,13 @@ const tokenBuilder = require('./token-builder');
 const router = require('express').Router();
 
 const Users = require('../users/users-model');
+const {
+  validateCreds, 
+  checkUsernameFree,
+  checkUsernameExists,
+} = require('../middleware/more-middleware')
 
-router.post('/register', (req, res, next) => {
+router.post('/register', validateCreds, checkUsernameFree, (req, res, next) => {
   let user = req.body;
   const rounds = process.env.BCRYPT_ROUNDS || 8;
   const hash = bcrypt.hashSync(user.password, rounds);
@@ -41,7 +46,7 @@ router.post('/register', (req, res, next) => {
   */
 });
 
-router.post('/login', (req, res, next) => {
+router.post('/login', validateCreds, checkUsernameExists, (req, res, next) => {
   let { username, password } = req.body;
   Users.findBy({ username })
     .then(([user]) => {
