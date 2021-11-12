@@ -1,11 +1,10 @@
-const e = require('express');
 const User = require('../users/users-model');
 
 const validateCreds = (req, res, next) => {
     const { username, password } = req.body;
     if (!username || !password) {
         next({
-            status: 422,
+            status: 401,
             message: 'username and password required'
         })
     } else {
