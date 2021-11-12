@@ -47,7 +47,7 @@ describe('server.js', () => {
       expect(res.body.message).toMatch(/welcome, foo/i)
     }, 750)
     test('[6] responds with correct message on invalid credentials', async () => {
-      let res = await (await request(server).post('/api/auth/login')).send({ username: 'bob', password: '1234' })
+      let res = await request(server).post('/api/auth/login').send({ username: 'bob', password: '1234' })
       expect(res.status).toBe(401)
       expect(res.body.message).toMatch(/invalid credentials/i)
     })
@@ -56,7 +56,20 @@ describe('server.js', () => {
     test('[7] gets jokes', async () => {
       let res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234' })
       res = await request(server).get('/api/jokes').set('Authorization', res.body.token)
-      expect(res.body).toMatchObject([{ "id": 1, "username": "foo"}])
+      expect(res.body).toMatchObject([
+        {
+          "id": "0189hNRf2g",
+          "joke": "I'm tired of following my dreams. I'm just going to ask them where they are going and meet up with them later."
+        },
+        {
+          "id": "08EQZ8EQukb",
+          "joke": "Did you hear about the guy whose whole left side was cut off? He's all right now."
+        },
+        {
+          "id": "08xHQCdx5Ed",
+          "joke": "Why didn’t the skeleton cross the road? Because he had no guts."
+        },
+      ])
     })
     test('[8] requests without a token are rejected', async () => {
       const res = await request(server).get('/api/jokes')
